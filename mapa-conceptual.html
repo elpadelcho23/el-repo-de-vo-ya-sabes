@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mapa conceptual — Plataforma de Gestión Administrativa</title>
+<style>
+  :root {
+    --bg: #f4f6fa; --card: #fff; --ink: #1f2a3c; --muted: #637087;
+    --blue: #2f6fed; --green: #1f9d6b; --amber: #e0a106; --red: #d9534f;
+    --violet: #7a4fd6; --teal: #138a9e; --line: #c9d2e3;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg); color: var(--ink); }
+  header { background: var(--ink); color: #fff; padding: 28px 40px; }
+  header h1 { margin: 0 0 6px; font-size: 26px; }
+  header p { margin: 0; color: #c7d0e0; }
+  nav { display: flex; gap: 8px; padding: 14px 40px; background: #fff; border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 2; flex-wrap: wrap; }
+  nav button { border: 1px solid var(--line); background: #fff; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 14px; color: var(--ink); }
+  nav button.active { background: var(--blue); color: #fff; border-color: var(--blue); }
+  main { padding: 32px 40px 60px; max-width: 1200px; margin: 0 auto; }
+  section { display: none; }
+  section.active { display: block; }
+  h2 { margin-top: 0; }
+  .lead { color: var(--muted); margin-top: -8px; margin-bottom: 28px; }
+
+  /* Avance */
+  .road { display: flex; flex-direction: column; gap: 0; position: relative; }
+  .step { display: grid; grid-template-columns: 56px 1fr 220px; gap: 18px; align-items: stretch; }
+  .dot-col { display: flex; flex-direction: column; align-items: center; }
+  .dot { width: 44px; height: 44px; border-radius: 50%; color: #fff; display: grid; place-items: center; font-weight: 700; flex-shrink: 0; }
+  .bar { width: 4px; flex: 1; background: var(--line); min-height: 18px; }
+  .card { background: var(--card); border-radius: 12px; padding: 14px 18px; box-shadow: 0 1px 3px rgba(0,0,0,.06); margin-bottom: 18px; border-left: 5px solid var(--c, var(--blue)); }
+  .card h3 { margin: 0 0 4px; font-size: 17px; }
+  .card .when { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+  .card ul { margin: 8px 0 0; padding-left: 18px; color: #3b4760; font-size: 14px; }
+  .side { align-self: center; margin-bottom: 18px; font-size: 13px; }
+  .tag { display: inline-block; padding: 4px 10px; border-radius: 14px; font-size: 12px; margin: 2px 4px 2px 0; background: #eef2fb; color: var(--ink); }
+  .tag.pilot { background: #e3f6ee; color: var(--green); font-weight: 600; }
+  .tag.demo { background: #fff4d6; color: #9a6c00; font-weight: 600; }
+  .loop { background: #fff4d6; border: 1px dashed var(--amber); border-radius: 10px; padding: 10px 14px; font-size: 14px; margin: -6px 0 18px 74px; max-width: 640px; }
+
+  /* Sistema */
+  .sys { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .layer { grid-column: 1 / -1; text-align: center; padding: 16px; border-radius: 12px; color: #fff; font-weight: 600; }
+  .layer small { display: block; font-weight: 400; opacity: .85; margin-top: 4px; }
+  .arrow { grid-column: 1 / -1; text-align: center; color: var(--muted); font-size: 22px; line-height: 1; }
+  .mod { background: var(--card); border-radius: 12px; padding: 16px; border-top: 6px solid var(--c); box-shadow: 0 1px 3px rgba(0,0,0,.06); }
+  .mod h3 { margin: 0 0 4px; font-size: 16px; }
+  .mod .who { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+  .mod ul { margin: 0; padding-left: 18px; font-size: 13px; color: #3b4760; }
+  .entities { grid-column: 1 / -1; display: grid; grid-template-columns: 3fr 1fr; gap: 16px; }
+  .ent { border: 2px dashed var(--line); border-radius: 12px; padding: 12px 16px; background: #fbfcfe; font-size: 14px; }
+  .ent b { display: block; margin-bottom: 4px; }
+  .ent.sep { border-color: var(--red); }
+
+  /* Equipo */
+  .team { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .person { background: var(--card); border-radius: 12px; padding: 18px; box-shadow: 0 1px 3px rgba(0,0,0,.06); border-top: 6px solid var(--c); }
+  .person h3 { margin: 0; }
+  .person .role { color: var(--muted); font-size: 14px; margin-bottom: 10px; }
+  .person ul { padding-left: 18px; margin: 0; font-size: 14px; }
+  .flow { margin-top: 26px; background: var(--card); border-radius: 12px; padding: 18px; font-size: 14px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  .flow span.n { background: #eef2fb; padding: 6px 12px; border-radius: 8px; }
+  .flow span.a { color: var(--muted); }
+
+  /* Usuarios */
+  .users { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .user { background: var(--card); border-radius: 12px; padding: 16px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
+  .avatar { width: 56px; height: 56px; border-radius: 50%; margin: 0 auto 8px; display: grid; place-items: center; color: #fff; font-size: 22px; font-weight: 700; }
+  .user .sees { margin-top: 10px; text-align: left; font-size: 13px; }
+  .note { margin-top: 22px; background: #fdecec; border-left: 5px solid var(--red); padding: 12px 16px; border-radius: 8px; font-size: 14px; }
+
+  @media (max-width: 860px) {
+    header, nav, main { padding-left: 18px; padding-right: 18px; }
+    .step { grid-template-columns: 44px 1fr; }
+    .side { grid-column: 2; margin-top: -10px; }
+    .loop { margin-left: 62px; }
+    .sys, .users { grid-template-columns: 1fr 1fr; }
+    .team, .entities { grid-template-columns: 1fr; }
+  }
+  @media print { nav { display: none; } section { display: block !important; page-break-after: always; } }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Plataforma de Gestión Administrativa — Centros CAC</h1>
+  <p>Mapa conceptual del proyecto: cómo avanzamos, qué es el sistema y quién hace qué.</p>
+</header>
+
+<nav>
+  <button class="active" data-tab="avance">Cómo avanzamos</button>
+  <button data-tab="sistema">Qué es el sistema</button>
+  <button data-tab="usuarios">Quién usa qué</button>
+  <button data-tab="equipo">Nuestro equipo</button>
+</nav>
+
+<main>
+
+<section id="avance" class="active">
+  <h2>Cómo avanzamos</h2>
+  <p class="lead">Primero mostramos, después construimos. Cada módulo se prueba con quien lo va a usar antes de pasar al siguiente.</p>
+
+  <div class="road">
+    <div class="step">
+      <div class="dot-col"><div class="dot" style="background:var(--muted)">0</div><div class="bar"></div></div>
+      <div class="card" style="--c:var(--muted)"><div class="when">Semana 1</div><h3>Organización</h3>
+        <ul><li>Leer la documentación funcional</li><li>Tablero de tareas y repositorio compartido</li><li>Pedir ejemplos de planillas y del cuaderno</li></ul></div>
+      <div class="side"><span class="tag">Todos</span></div>
+    </div>
+
+    <div class="step">
+      <div class="dot-col"><div class="dot" style="background:var(--amber)">1</div><div class="bar"></div></div>
+      <div class="card" style="--c:var(--amber)"><div class="when">Semanas 2–3</div><h3>Prototipo visual + demo</h3>
+        <ul><li>Pantallas navegables con datos ficticios</li><li>Demo a Administración y a call center/stock</li><li>Anotar qué les gusta, qué les falta y qué los confunde</li></ul></div>
+      <div class="side"><span class="tag demo">DEMO</span><span class="tag">Compa 1</span><span class="tag">Compa 2</span></div>
+    </div>
+    <div class="loop">↺ Si en la demo piden cambios grandes, ajustamos el prototipo y lo volvemos a mostrar antes de seguir.</div>
+
+    <div class="step">
+      <div class="dot-col"><div class="dot" style="background:var(--violet)">2</div><div class="bar"></div></div>
+      <div class="card" style="--c:var(--violet)"><div class="when">Semana 4</div><h3>Decisiones + especificación para Cursor</h3>
+        <ul><li>Prioridad de módulos, usuarios, stock y datos de prueba</li><li>Pantallas, tablas, relaciones, validaciones y permisos</li></ul></div>
+      <div class="side"><span class="tag">Vos</span><span class="tag">Todos</span></div>
+    </div>
+
+    <div class="step">
+      <div class="dot-col"><div class="dot" style="background:var(--ink)">3</div><div class="bar"></div></div>
+      <div class="card" style="--c:var(--ink)"><div class="when">Semanas 5–6</div><h3>Base de la aplicación</h3>
+        <ul><li>Login y cuentas personales</li><li>Permisos por módulo y reemplazos autorizados</li><li>Centros, base de datos y auditoría</li></ul></div>
+      <div class="side"><span class="tag">Vos</span><span class="tag">Compa 1</span></div>
+    </div>
+
+    <div class="step">
+      <div class="dot-col"><div class="dot" style="background:var(--blue)">4</div><div class="bar"></div></div>
+      <div class="card" style="--c:var(--blue)"><div class="when">Semanas 7–9</div><h3>Presentismo + Documentación</h3>
+        <ul><li>Panel diario de los 23 centros con colores</li><li>Novedades: ausencias, demoras, licencias</li><li>Programas (SUMAR y otros) y documentación pendiente</li></ul></div>
+      <div class="side"><span class="tag pilot">PILOTO · Luis</span></div>
+    </div>
+
+    <div class="step">
+      <div class="dot-col"><div class="dot" style="background:var(--green)">5</div><div class="bar"></div></div>
+      <div class="card" style="--c:var(--green)"><div class="when">Semanas 10–12</div><h3>Inventario y pedidos</h3>
+        <ul><li>Stock de formularios y aviso de falta de stock</li><li>Pedidos de los centros y entregas confirmadas</li><li>Historial por centro (las firmas en papel se mantienen)</li></ul></div>
+      <div class="side"><span class="tag pilot">PILOTO · Stock</span></div>
+    </div>
+
+    <div class="step">
+      <div class="dot-col"><div class="dot" style="background:var(--teal)">6</div><div class="bar"></div></div>
+      <div class="card" style="--c:var(--teal)"><div class="when">Semanas 13–16</div><h3>Pacientes y call center</h3>
+        <ul><li>Búsqueda rápida por DNI, nombre o teléfono</li><li>Ficha individual y familiares con teléfono compartido</li><li>Historial de atenciones y registro de llamadas</li></ul></div>
+      <div class="side"><span class="tag pilot">PILOTO · Call center</span></div>
+    </div>
+
+    <div class="step">
+      <div class="dot-col"><div class="dot" style="background:var(--red)">7</div></div>
+      <div class="card" style="--c:var(--red)"><div class="when">Continuo</div><h3>Mejoras</h3>
+        <ul><li>Copias de seguridad automáticas</li><li>Reportes, integración con SUMAR</li><li>Evaluar modo sin conexión</li></ul></div>
+      <div class="side"><span class="tag">Todos</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="sistema">
+  <h2>Qué es el sistema</h2>
+  <p class="lead">Una sola plataforma, con módulos separados según cada área. La base es compartida, pero la información no se mezcla.</p>
+
+  <div class="sys">
+    <div class="layer" style="background:var(--ink)">Plataforma web administrativa<small>Se usa desde el navegador, en computadora o celular</small></div>
+    <div class="arrow">↓</div>
+    <div class="layer" style="background:var(--violet)">Inicio de sesión, permisos y navegación<small>Cada empleado ve solo lo que le corresponde</small></div>
+    <div class="arrow">↓</div>
+
+    <div class="mod" style="--c:var(--blue)"><h3>Presentismo</h3><div class="who">Administración</div>
+      <ul><li>Estado diario por centro</li><li>Asistencia y novedades</li><li>Centros sin foto</li></ul></div>
+    <div class="mod" style="--c:var(--violet)"><h3>Documentación</h3><div class="who">Administración</div>
+      <ul><li>Programas configurables</li><li>Recepción de formularios</li><li>Pendientes por período</li></ul></div>
+    <div class="mod" style="--c:var(--green)"><h3>Inventario</h3><div class="who">Stock + centros</div>
+      <ul><li>Stock por formulario</li><li>Pedidos y entregas</li><li>Historial de movimientos</li></ul></div>
+    <div class="mod" style="--c:var(--teal)"><h3>Call center</h3><div class="who">Operadores</div>
+      <ul><li>Buscador de pacientes</li><li>Ficha e historial</li><li>Registro de llamadas</li></ul></div>
+
+    <div class="arrow">↓</div>
+    <div class="entities">
+      <div class="ent"><b>Centros CAC (23)</b>Se relacionan con su personal administrativo, sus presentaciones de documentación y sus pedidos de materiales.</div>
+      <div class="ent sep"><b>Pacientes</b>Datos clínicos separados, con acceso estricto.</div>
+    </div>
+    <div class="arrow">↓</div>
+    <div class="layer" style="background:#3b4760">Base de datos centralizada<small>Registros · historial · permisos · auditoría (quién hizo qué y cuándo) · copias de seguridad</small></div>
+  </div>
+</section>
+
+<section id="usuarios">
+  <h2>Quién usa qué</h2>
+  <p class="lead">Cuentas personales. Si alguien cubre otro puesto, el supervisor le habilita ese módulo.</p>
+
+  <div class="users">
+    <div class="user"><div class="avatar" style="background:var(--blue)">L</div><b>Luis</b><div class="who">Administración</div>
+      <div class="sees"><span class="tag">Presentismo</span><span class="tag">Documentación</span></div></div>
+    <div class="user"><div class="avatar" style="background:var(--teal)">CC</div><b>Call center / Stock</b><div class="who">Empleada de la 2ª entrevista</div>
+      <div class="sees"><span class="tag">Call center</span><span class="tag">Stock: encargado</span></div></div>
+    <div class="user"><div class="avatar" style="background:var(--green)">C</div><b>Centros</b><div class="who">Solicitan materiales</div>
+      <div class="sees"><span class="tag">Stock: pedidos</span></div></div>
+    <div class="user"><div class="avatar" style="background:var(--violet)">S</div><b>Supervisor</b><div class="who">Administra el sistema</div>
+      <div class="sees"><span class="tag">Usuarios</span><span class="tag">Permisos</span><span class="tag">Catálogos</span></div></div>
+  </div>
+
+  <div class="note"><b>Ojo con SUMAR:</b> Luis trabaja con pacientes sin obra social; el call center necesita pacientes con y sin obra social. Los filtros de un módulo no deben esconder pacientes que el otro necesita.</div>
+</section>
+
+<section id="equipo">
+  <h2>Nuestro equipo</h2>
+  <p class="lead">Tres personas, cada una dueña de un área, trabajando juntas en cada demo.</p>
+
+  <div class="team">
+    <div class="person" style="--c:var(--ink)"><h3>Vos</h3><div class="role">Coordinación + base técnica</div>
+      <ul><li>Tablero y reuniones</li><li>Base de datos</li><li>Login, permisos y auditoría</li><li>Especificación para Cursor</li><li>Revisión e integración</li></ul></div>
+    <div class="person" style="--c:var(--amber)"><h3>Compa 1</h3><div class="role">Interfaz + prototipo</div>
+      <ul><li>Prototipo visual</li><li>Pantallas de cada módulo</li><li>Colores de estado y diseño adaptable</li><li>Buscador rápido del call center</li></ul></div>
+    <div class="person" style="--c:var(--green)"><h3>Compa 2</h3><div class="role">Relevamiento + datos + pruebas</div>
+      <ul><li>Contacto con los empleados</li><li>Datos ficticios realistas</li><li>Confirmar fuentes de datos (SUMAR)</li><li>Pilotos, pruebas y manual de uso</li></ul></div>
+  </div>
+
+  <div class="flow">
+    <span class="n">Compa 2 releva</span><span class="a">→</span>
+    <span class="n">Compa 1 diseña</span><span class="a">→</span>
+    <span class="n">Demo con empleados</span><span class="a">→</span>
+    <span class="n">Vos especificás y armás la base</span><span class="a">→</span>
+    <span class="n">Compa 1 construye pantallas</span><span class="a">→</span>
+    <span class="n">Compa 2 prueba en piloto</span><span class="a">↺</span>
+  </div>
+</section>
+
+</main>
+
+<script>
+  document.querySelectorAll('nav button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab).classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>
